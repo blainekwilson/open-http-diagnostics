@@ -1,40 +1,25 @@
-# Open HTTP Diagnostics (OHD) Common Logging Profile
-
-**Version:** Draft 0.1  
-**Level:** 1 – Common Logging Profile  
+# Open HTTP Diagnostics (OHD) Common Access Logging Profile
+**Version:** Draft 0.2  
+**Level:** 1 – Common Access Logging Profile  
 **Status:** Draft
-
 ---
-
 # 1. Introduction
-
-The Open HTTP Diagnostics (OHD) Common Logging Profile establishes a consistent HTTP access logging standard across web servers, reverse proxies, load balancers, web application firewalls (WAFs), application frameworks, and applications.
-
-The purpose of this specification is to simplify troubleshooting by defining a common set of logging fields that can be consistently produced regardless of the underlying HTTP infrastructure.
-
+The Open HTTP Diagnostics (OHD) Common Access Logging Profile establishes a common HTTP access logging standard across web servers, reverse proxies, load balancers, Web Application Firewalls (WAFs), application frameworks, and applications.
+The goal is to define a minimum set of logging fields that can be consistently produced regardless of the underlying HTTP platform while remaining compatible with existing logging infrastructure.
 This specification complements the W3C Trace Context specification and does **not** replace existing platform logging formats.
-
 ---
-
 # 2. Goals
-
-The goals of the OHD Common Logging Profile are to:
-
-- Establish consistent HTTP access log field names.
+The goals of the OHD Common Access Logging Profile are to:
+- Establish common HTTP access log field names.
 - Encourage adoption of W3C Trace Context.
-- Simplify searching across heterogeneous infrastructure.
-- Improve interoperability between logging and SIEM platforms.
-- Minimize implementation effort by leveraging existing platform capabilities.
-- Serve as the foundation for higher Open HTTP Diagnostics levels.
-
+- Simplify troubleshooting across heterogeneous infrastructure.
+- Improve interoperability with SIEM and observability platforms.
+- Minimize implementation effort by leveraging existing platform logging capabilities.
+- Provide the foundation for higher Open HTTP Diagnostics levels.
 ---
-
 # 3. Scope
-
 Level 1 defines only HTTP access logging.
-
-It does **not** define:
-
+Level 1 does **not** define:
 - Trace Context generation
 - Trace Context propagation
 - Response diagnostic headers
@@ -42,129 +27,74 @@ It does **not** define:
 - Log transport
 - Log storage
 - SIEM integration
-
 These capabilities are introduced in later OHD levels.
-
 ---
-
-# 4. Canonical Field Definitions
-
-The following fields define the OHD Common Logging Profile.
-
+# 4. Core Profile (MUST)
+Every OHD Level 1 implementation SHALL support the following canonical fields.
+| Position | Field | Description |
+|----------|-------|-------------|
+| 1 | timestamp | Date and time the request was processed (ISO-8601 recommended). |
+| 2 | client_ip | Source IP address of the client. |
+| 3 | method | HTTP request method. |
+| 4 | host | HTTP Host header. |
+| 5 | path | Request path excluding the query string. |
+| 6 | status | HTTP response status code. |
+| 7 | duration | Total request processing time. |
+| 8 | traceparent | Incoming W3C Trace Context `traceparent` request header. |
+These fields form the OHD Core Profile and SHALL always appear first in the access log.
+---
+# 5. Recommended Fields (SHOULD)
+Platforms SHOULD log the following fields when supported.
 | Field | Description |
-|--------|-------------|
-| timestamp | Date and time the request was processed (ISO-8601 recommended). |
-| client_ip | Source IP address of the client. |
-| method | HTTP request method. |
-| scheme | HTTP or HTTPS. |
-| host | HTTP Host header. |
-| path | Request path excluding the query string. |
+|-------|-------------|
 | query | HTTP query string. |
 | protocol | HTTP protocol version. |
-| status | HTTP response status code. |
-| bytes_sent | Number of response bytes sent to the client. |
-| duration | Total request processing time. |
-| traceparent | Incoming W3C Trace Context `traceparent` request header. |
-| tracestate | Incoming W3C Trace Context `tracestate` request header when present. |
+| bytes_sent | Number of response bytes sent. |
 | referer | HTTP Referer request header. |
 | user_agent | HTTP User-Agent request header. |
-
+| tracestate | Incoming W3C Trace Context `tracestate` request header. |
+Recommended fields SHALL appear immediately after the Core Profile fields.
 ---
-
-# 5. Optional Fields
-
-Implementations MAY log additional fields.
-
+# 6. Platform Extensions (MAY)
+Platforms MAY log additional fields.
 Examples include:
-
-| Field | Description |
-|--------|-------------|
-| server_ip | Local server IP address. |
-| server_port | Local listening port. |
-| authenticated_user | Authenticated user. |
-| tls_version | Negotiated TLS version. |
-| tls_cipher | Negotiated cipher suite. |
-| request_id | Platform-specific request identifier. |
-| virtual_host | Platform-specific virtual host or site name. |
-
-Platform-specific extensions SHOULD be documented.
-
+- server_node
+- server_ip
+- server_port
+- authenticated_user
+- tls_version
+- tls_cipher
+- request_id
+- virtual_host
+Platform-specific fields SHALL be appended **after** the Core Profile and Recommended fields.
+The order of platform-specific fields is implementation-defined.
 ---
-
-# 6. Recommended Field Order
-
-To simplify parsing and comparison across platforms, the following field order is recommended.
-
-| Position | Field |
-|----------|-------|
-| 1 | timestamp |
-| 2 | client_ip |
-| 3 | method |
-| 4 | scheme |
-| 5 | host |
-| 6 | path |
-| 7 | query |
-| 8 | protocol |
-| 9 | status |
-| 10 | bytes_sent |
-| 11 | duration |
-| 12 | traceparent |
-| 13 | tracestate |
-| 14 | referer |
-| 15 | user_agent |
-
-Platforms are encouraged to preserve this ordering whenever practical.
-
----
-
-# 7. Example Log Record
-
-The following example illustrates a tab-separated log entry.
-
+# 7. Metadata
+When the logging format supports metadata, implementations SHOULD identify OHD logs.
+Example:
 ```text
-2026-06-30T18:42:12+00:00	203.0.113.15	GET	https	example.com	/products	id=123	HTTP/2.0	200	4281	0.018	00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01		curl/8.7.1
+#OpenHTTPDiagnostics: 1.0
+#Profile: Core
+#Platform: nginx
+#Fields: timestamp client_ip method host path status duration traceparent query protocol bytes_sent referer user_agent tracestate
 ```
-
-The fields correspond to:
-
-| Position | Value |
-|----------|-------|
-| 1 | timestamp |
-| 2 | client_ip |
-| 3 | method |
-| 4 | scheme |
-| 5 | host |
-| 6 | path |
-| 7 | query |
-| 8 | protocol |
-| 9 | status |
-| 10 | bytes_sent |
-| 11 | duration |
-| 12 | traceparent |
-| 13 | tracestate (empty) |
-| 14 | referer (empty) |
-| 15 | user_agent |
-
+Platforms that already define metadata formats (such as IIS W3C logging) SHOULD include equivalent information where practical.
 ---
-
-# 8. Trace Context
-
+# 8. Example Log Entry
+Example using tab-separated values.
+```text
+2026-06-30T18:42:12+00:00	203.0.113.15	GET	example.com	/products	200	0.018	00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01	id=123	HTTP/2.0	4281		curl/8.7.1
+```
+---
+# 9. W3C Trace Context
 Open HTTP Diagnostics adopts the W3C Trace Context specification.
-
-If a valid `traceparent` request header exists, implementations SHOULD log it exactly as received.
-
-If a `tracestate` request header exists, implementations SHOULD log it exactly as received.
-
+If a valid `traceparent` request header exists, implementations SHALL log it exactly as received.
+If a `tracestate` request header exists and is supported, implementations SHOULD log it exactly as received.
 Generation or propagation of Trace Context is outside the scope of Level 1.
-
 ---
-
-# 9. Platform Mapping
-
+# 10. Platform Mapping
 Each supported platform SHALL document how the canonical OHD fields map to native logging capabilities.
-
 Examples include:
-
 - IIS W3C Logging
 - NGINX
 - Apache HTTP Server
@@ -173,31 +103,22 @@ Examples include:
 - ASP.NET Core
 - Flask
 - Express.js
-
-Platform-specific documentation SHOULD reference this specification rather than redefining the field names.
-
+Platform documentation SHALL reference this specification rather than redefining the canonical field names.
 ---
-
-# 10. Conformance
-
-A platform conforms to the OHD Common Logging Profile when:
-
-1. The canonical OHD fields are logged.
-2. Logged values correspond to the field definitions in this specification.
-3. Existing W3C Trace Context headers are logged without modification.
-4. Platform-specific extensions are documented.
-
+# 11. Conformance
+A platform conforms to the OHD Common Access Logging Profile when:
+1. The Core Profile fields are logged.
+2. Core Profile fields appear in the canonical order.
+3. Existing `traceparent` headers are logged without modification.
+4. Additional fields are appended after the canonical OHD fields.
+5. Platform-specific extensions are documented.
 ---
-
-# 11. Future Levels
-
-The Common Logging Profile serves as the foundation for additional Open HTTP Diagnostics capabilities.
-
+# 12. Future Levels
+The Common Access Logging Profile serves as the foundation for additional Open HTTP Diagnostics capabilities.
 | Level | Description |
 |--------|-------------|
-| Level 1 | Common HTTP Diagnostics Logging Profile |
+| Level 1 | Common Access Logging Profile |
 | Level 2 | W3C Trace Context generation and propagation |
 | Level 3 | Diagnostic response headers |
 | Level 4 | Deep request diagnostics (Failed Request Trace) |
-
 Each level builds upon the previous level while remaining independently deployable.
