@@ -30,8 +30,8 @@ Recommended fields:
 
 ## Query string guidance
 
-Query strings may contain secrets, tokens, or personal information. Implementations should avoid logging raw query strings unless explicitly configured by the infrastructure owner.
+Query strings may contain secrets, tokens, or personal information. Implementations should avoid logging raw query strings unless explicitly configured by the infrastructure owner.  If you need to log this information then it should be masked using OHD Level 3 logging.
 
 ## Header guidance
 
-Sensitive request headers such as `Authorization`, `Cookie`, and security tokens must not be logged by default.
+Sensitive request headers such as `Authorization`, `Cookie`, and security tokens must not be logged by default.  If you need to log this information then it should be masked using OHD Level 3 logging.
