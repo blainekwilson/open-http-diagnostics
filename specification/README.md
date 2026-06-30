@@ -9,4 +9,8 @@ The specification is organized around four adoption levels:
 3. Response Diagnostics
 4. Deep Diagnostics
 
-The specification should describe expected behavior. Platform-specific implementation details belong under `implementations/`.
+The specification should describe expected behavior.
+
+Configuration changes to platforms are documented under `guides/`.
+
+Platform-specific implementation details belong under `implementations/`.
