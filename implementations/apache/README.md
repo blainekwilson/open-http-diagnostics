@@ -1,11 +1,10 @@
-# apache Implementation
+# Apache Implementation
 
-Placeholder for a future Open HTTP Diagnostics implementation.
+This directory will contain Apache HTTP Server configuration examples and optional modules/helpers for Open HTTP Diagnostics.
 
-Planned capabilities:
+Planned Level 1 example:
 
-- W3C Trace Context handling
-- Common access logging
-- Response Trace ID
-- Optional Trace-Path
-- Optional deep diagnostics where platform support allows
+```apache
+LogFormat "%h %l %u %t \"%r\" %>s %b %{traceparent}i %{OHD-Trace-ID}o %{OHD-Trace-Path}o" ohd
+CustomLog logs/ohd_access.log ohd
+```

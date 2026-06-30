@@ -1,11 +1,10 @@
-# flask Implementation
+# Flask Implementation
 
-Placeholder for a future Open HTTP Diagnostics implementation.
+This directory will contain Flask middleware for Open HTTP Diagnostics.
 
 Planned capabilities:
 
-- W3C Trace Context handling
-- Common access logging
-- Response Trace ID
-- Optional Trace-Path
-- Optional deep diagnostics where platform support allows
+- Preserve or create W3C `traceparent`.
+- Add common log fields.
+- Emit `OHD-Trace-ID`.
+- Optionally emit `OHD-Trace-Path`.

@@ -1,11 +1,10 @@
-# aspnet-core Implementation
+# ASP.NET Core Implementation
 
-Placeholder for a future Open HTTP Diagnostics implementation.
+This directory will contain ASP.NET Core middleware for Open HTTP Diagnostics.
 
 Planned capabilities:
 
-- W3C Trace Context handling
-- Common access logging
-- Response Trace ID
-- Optional Trace-Path
-- Optional deep diagnostics where platform support allows
+- Preserve or create W3C `traceparent`.
+- Add structured logging fields.
+- Emit `OHD-Trace-ID`.
+- Optionally emit `OHD-Trace-Path`.

@@ -1,89 +1,40 @@
 # Architecture
 
-Open HTTP Diagnostics separates core diagnostic behavior from optional advanced diagnostics.
+Open HTTP Diagnostics is organized as a specification with reference configurations and implementations.
 
 ```text
-                 HTTP Request
-                      │
-                      ▼
-          ┌────────────────────────┐
-          │ Trace Context Profile  │
-          │ - validate traceparent │
-          │ - create if missing    │
-          │ - preserve if valid    │
-          └───────────┬────────────┘
-                      │
-                      ▼
-          ┌────────────────────────┐
-          │ Common Access Logging  │
-          │ - trace_id             │
-          │ - layer                │
-          │ - status/duration      │
-          └───────────┬────────────┘
-                      │
-                      ▼
-          ┌────────────────────────┐
-          │ Response Trace ID      │
-          │ - Trace-ID header      │
-          └───────────┬────────────┘
-                      │
-                      ▼
-       Optional Diagnostic Extensions
-          ┌──────────────┬──────────────┐
-          ▼              ▼              ▼
-   Trace-Path       Deep Diagnostics   Platform adapters
+HTTP request
+   |
+   | traceparent created or preserved
+   v
+Infrastructure and application layers
+   |
+   | common fields logged at each participating layer
+   v
+HTTP response
+   |
+   | optional OHD-Trace-ID / OHD-Trace-Path
+   v
+Client or support engineer
 ```
 
-## Core flow
+## Design model
 
-1. Request enters a participating component.
-2. Component checks for valid `traceparent`.
-3. If missing or invalid, component creates trace context if capable.
-4. Component logs the active trace ID using common fields.
-5. Component forwards trace context downstream.
-6. Component may return `Trace-ID` in the response.
-7. Optional extensions may add path hints or deep diagnostics.
+### Specification first
 
-## Layered adoption
+The primary artifact is the behavior specification, not a specific library.
 
-Organizations can adopt Open HTTP Diagnostics incrementally.
+### Configuration where possible
 
-### Minimal adoption
+If a platform can already conform through configuration, the project should provide scripts and documentation rather than unnecessary code.
 
-- Generate/preserve `traceparent`.
-- Log `trace_id`.
+### Reference implementation where needed
 
-### Operational adoption
+If a platform cannot natively conform, the project should provide middleware, modules, or helper libraries.
 
-- Add common access log fields.
-- Return `Trace-ID` to clients.
+## Capability layers
 
-### Advanced diagnostics
-
-- Enable `Trace-Path` with opaque labels.
-- Enable deep diagnostics during troubleshooting.
-
-## Implementation model
-
-Each platform implementation should be one package or module with independently configurable capabilities.
-
-Example:
-
-```yaml
-open_http_diagnostics:
-  trace_context:
-    enabled: true
-    create_if_missing: true
-
-  access_logging:
-    enabled: true
-
-  response_trace_id:
-    enabled: true
-
-  trace_path:
-    enabled: false
-
-  deep_diagnostics:
-    enabled: false
-```
+1. Common logging
+2. Trace context enforcement
+3. Response diagnostics
+4. Deep diagnostics

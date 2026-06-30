@@ -1,92 +1,53 @@
 # Open HTTP Diagnostics
 
-Open HTTP Diagnostics is a specification and set of reference implementations for consistent HTTP diagnostics across web servers, reverse proxies, load balancers, WAFs, application frameworks, and cloud infrastructure.
+Open HTTP Diagnostics (OHD) is a specification-first project for consistent HTTP diagnostics across infrastructure, proxies, load balancers, web servers, and application frameworks.
 
-The project builds on **W3C Trace Context** rather than replacing it. Its goal is to make HTTP request troubleshooting easier by standardizing how trace identifiers are created, propagated, logged, and optionally returned to clients for support-safe troubleshooting.
+The project builds on W3C Trace Context rather than replacing it. The core goal is to make HTTP request troubleshooting easier by standardizing trace propagation, access-log fields, optional response diagnostics, and deep failed-request diagnostics.
 
 ## Goals
 
-- Ensure every participating HTTP layer has a valid `traceparent` request header.
-- Generate `traceparent` when it is missing or invalid, where supported.
-- Preserve and propagate existing W3C Trace Context.
-- Log common HTTP access fields using consistent names across platforms.
-- Optionally return a support-safe trace identifier in the HTTP response.
-- Optionally expose opaque diagnostic path hints using a response header.
-- Provide a foundation for deeper Failed Request Trace-style diagnostics.
+- Ensure requests have a valid W3C `traceparent` header when possible.
+- Define a common HTTP diagnostic logging profile across platforms.
+- Provide safe optional response headers that help support teams identify a request.
+- Support deeper failed-request diagnostics where platforms allow it.
+- Provide configuration helpers and reference implementations for common web platforms.
 
-## Non-goals
+## Capability levels
 
-- Replace OpenTelemetry, W3C Trace Context, or vendor observability tools.
-- Expose internal hostnames, private IP addresses, instance IDs, pod names, account IDs, or sensitive infrastructure details.
-- Act as a log aggregation platform or SIEM.
-- Require every infrastructure component to support every feature.
+### Level 1: Common HTTP Diagnostics Logging
 
-## Core concepts
+The lowest-friction adoption path. Platforms log a common set of fields, including W3C Trace Context headers where available.
 
-Open HTTP Diagnostics is organized around four capabilities:
+For many platforms this requires configuration only, not code.
 
-1. **Trace Context Profile**  
-   A standard operational profile for creating, validating, preserving, and propagating W3C `traceparent` headers.
+### Level 2: Trace Context Enforcement
 
-2. **Common Access Log**  
-   A common JSON logging shape for HTTP access logs across platforms.
+A participating layer ensures a valid `traceparent` exists. If the request already contains a valid `traceparent`, it is preserved and propagated. If it is missing or invalid, the first capable participating layer generates one.
 
-3. **Response Trace ID**  
-   An optional response header that returns the trace ID to clients and support teams.
+### Level 3: Response Diagnostics
 
-4. **Diagnostic Extensions**  
-   Optional response path hints and deep request diagnostics for environments that want additional troubleshooting detail.
+Optional response headers expose support-safe diagnostic values, such as the trace ID generated or used for the request. Path-style diagnostics are optional and should use opaque owner-defined labels.
 
-## Default posture
+### Level 4: Deep Diagnostics
 
-The project should be safe by default.
-
-```yaml
-trace_context:
-  enabled: true
-  create_if_missing: true
-
-access_logging:
-  enabled: true
-  format: json
-
-response_trace_id:
-  enabled: true
-
-trace_path:
-  enabled: false
-
-deep_diagnostics:
-  enabled: false
-```
-
-## Example response
-
-```http
-HTTP/1.1 200 OK
-Trace-ID: 4bf92f3577b34da6a3ce929d0e0e4736
-```
-
-If optional diagnostic path hints are enabled:
-
-```http
-HTTP/1.1 200 OK
-Trace-ID: 4bf92f3577b34da6a3ce929d0e0e4736
-Trace-Path: edge="a1"; waf="b2"; proxy="c3"; app="123"
-```
-
-`Trace-Path` values must be opaque, owner-defined labels. They must not disclose hostnames, private IPs, instance IDs, Kubernetes pod names, cloud account IDs, or vendor-sensitive details.
+Optional failed-request tracing captures deeper request/response details, timing, routing decisions, and platform-specific diagnostic context.
 
 ## Repository layout
 
 ```text
-spec/                    Specification documents
-docs/                    Architecture and implementation guidance
-implementations/          Reference implementations by platform
-examples/                 Example requests, responses, and logs
-tests/conformance/        Future conformance tests
+open-http-diagnostics/
+  specification/       Normative and standards-style documents
+  profiles/            Adoption profiles for Levels 1-4
+  implementations/     Platform-specific configuration and reference implementations
+  docs/                Architecture, standards, security, and vendor notes
+  examples/            Example curl output, logs, and responses
+  conformance-tests/   Future validation tests
 ```
+
+## First reference target
+
+The first configuration target is IIS W3C logging because IIS can already log custom request headers using W3C custom fields. The IIS helper scripts configure logging to include the `traceparent` request header.
 
 ## Status
 
-This project is in early design. The initial goal is to define the specification, produce a working NGINX/OpenResty reference implementation, and migrate the existing Failed Request Trace prototype into the broader diagnostics framework.
+Early design/prototype. The specification and implementations are expected to evolve.

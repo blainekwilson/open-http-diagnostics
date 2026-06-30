@@ -1,60 +1,19 @@
 # Existing Vendor Headers
 
-This document tracks existing diagnostic, tracing, and request identification headers used by common infrastructure platforms.
+This document tracks existing vendor-specific headers and logging fields that may help with HTTP diagnostics.
 
-The goal is to document what already exists before defining new behavior.
+## Examples to research
 
-## Cloud/CDN/WAF examples to research
+- AWS CloudFront response headers
+- AWS Application Load Balancer access logs
+- AWS API Gateway request IDs
+- Azure Front Door headers
+- Imperva Cloud WAF headers and logs
+- F5 headers and logging options
+- NGINX variables and log formats
+- Apache LogFormat request and response header fields
+- IIS W3C custom logging fields
 
-- AWS CloudFront
-- AWS Application Load Balancer
-- AWS API Gateway
-- Imperva Cloud WAF
-- F5 BIG-IP
-- Cloudflare
-- Akamai
-- Azure Front Door
-- Google Cloud Load Balancing
+## Purpose
 
-## Web/proxy examples to research
-
-- NGINX
-- OpenResty
-- Apache HTTP Server
-- IIS
-- Envoy
-- HAProxy
-- Caddy
-
-## Application framework examples to research
-
-- ASP.NET Core
-- Flask
-- Express
-- Spring Boot
-- FastAPI
-- Django
-
-## Documentation format
-
-Each platform entry should include:
-
-```markdown
-## Platform name
-
-### Request headers added
-
-### Response headers added
-
-### Trace context support
-
-### Can generate traceparent if missing?
-
-### Can log trace ID?
-
-### Can add response Trace-ID?
-
-### Can add opaque path hint?
-
-### Notes and limitations
-```
+The goal is not to replace vendor-specific diagnostics. The goal is to map existing capabilities into a common diagnostic profile.

@@ -1,31 +1,19 @@
 # Contributing
 
-Contributions are welcome, especially around standards alignment, implementation safety, and platform support.
+Contributions are welcome.
 
-## Contribution areas
+Good early contributions include:
 
-- Specification feedback
-- Security review
-- NGINX/OpenResty implementation
-- Apache implementation
-- IIS implementation
-- Application framework middleware
-- Sample logs and responses
-- Conformance tests
-- Documentation of existing vendor headers
+- Platform-specific logging configuration examples.
+- Safe default field mappings.
+- Implementations that create or preserve W3C `traceparent`.
+- Examples showing how to correlate logs across layers.
+- Security reviews of response header behavior.
 
-## Design principles
+## Design expectations
 
-- Build on existing standards, especially W3C Trace Context.
-- Prefer safe defaults.
-- Do not expose infrastructure details in response headers.
-- Keep optional diagnostics clearly separated from core logging behavior.
-- Use consistent field names across platforms.
-- Make features independently configurable.
-
-## Pull request expectations
-
-- Include documentation for new behavior.
-- Include examples when adding or changing header behavior.
-- Include security considerations for any response-visible data.
-- Avoid vendor-specific assumptions in the core specification.
+- Build on W3C Trace Context.
+- Prefer configuration over code where a platform already supports the needed behavior.
+- Keep infrastructure identifiers opaque and owner-defined.
+- Avoid vendor lock-in.
+- Separate normative specification from implementation guidance.
