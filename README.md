@@ -36,8 +36,9 @@ Optional failed-request tracing captures deeper request/response details, timing
 
 ```text
 open-http-diagnostics/
-  specification/       Normative and standards-style documents
+  specification/      Normative and standards-style documents
   profiles/            Adoption profiles for Levels 1-4
+  guides Configure     existing product
   implementations/     Platform-specific configuration and reference implementations
   docs/                Architecture, standards, security, and vendor notes
   examples/            Example curl output, logs, and responses
