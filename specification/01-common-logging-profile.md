@@ -81,6 +81,14 @@ Platforms should log the following fields when supported.
 
 Recommended fields should appear immediately after the Core Profile fields.
 
+## Query string guidance
+
+Query strings may contain secrets, tokens, or personal information. Implementations should avoid logging raw query strings unless explicitly configured by the infrastructure owner.  If you need to log this information then it should be masked using OHD Level 3 logging.
+
+## Header guidance
+
+Sensitive request headers such as `Authorization`, `Cookie`, and security tokens must not be logged by default.  If you need to log this information then it should be masked using OHD Level 3 logging.
+
 ---
 
 # 6. Platform Extensions
