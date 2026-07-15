@@ -1,0 +1,1 @@
+{"timestamp":"2026-07-14T20:15:12+00:00","client_ip":"203.0.113.15","method":"GET","host":"example.com","path":"/products","status":200,"duration":0.018,"traceparent":"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01","query":"id=123","protocol":"HTTP/2.0","bytes_sent":4281,"referer":"-","user_agent":"curl/8.7.1","tracestate":"-"}

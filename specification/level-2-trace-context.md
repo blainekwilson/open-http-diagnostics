@@ -1,32 +1,39 @@
-# Trace Context Profile
+# Level 2 — Trace Context Enforcement
+
+**Status:** Initial draft  
+**Level:** 2
 
 ## Purpose
 
-This profile defines how Open HTTP Diagnostics participants use W3C Trace Context for HTTP request correlation.
+Level 2 ensures that a participating HTTP layer has valid W3C Trace Context available for downstream propagation and logging.
 
-## Request header
+## Required behavior
 
-Open HTTP Diagnostics uses the W3C `traceparent` request header.
+A Level 2 participant:
 
-Example:
+1. examines the incoming `traceparent` header;
+2. accepts and propagates a valid value according to W3C Trace Context processing rules;
+3. creates a new trace when the header is missing or unusable;
+4. forwards Trace Context to the next participating layer;
+5. records the effective trace information in its access or diagnostic logs.
 
-```http
-traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
-```
+## Trace identity and spans
 
-## Behavior
+The trace ID identifies the end-to-end trace. Each tracing participant may create a new parent ID for the outgoing request as required by the W3C model. Implementations must not treat the complete `traceparent` value as an immutable request ID across every hop.
 
-A participating component should follow this behavior:
+For cross-layer searches, logs should expose at least:
 
-1. If `traceparent` is present and valid, preserve it and propagate it.
-2. If `traceparent` is missing or invalid and the component is capable of generating one, create a valid `traceparent` before forwarding the request.
-3. Log the complete `traceparent` value where supported.
-4. Log extracted fields where supported:
-   - `trace_id`
-   - `span_id`
-   - `trace_flags`
-   - `traceparent_source`
+- `trace_id` — the 32-hex-character trace ID;
+- `parent_id` — the parent ID used or observed by the layer;
+- `trace_flags` — the trace flags;
+- `trace_source` — `incoming`, `generated`, or `restarted`.
 
-## Non-goals
+These Level 2 fields are structured diagnostic fields and do not change the Level 1 positional field list.
 
-This project does not replace W3C Trace Context or OpenTelemetry.
+## Invalid input
+
+Implementations must follow W3C Trace Context requirements for malformed, forbidden, or unsupported values. They must not blindly trust client-provided tracing data for authorization, routing, or security decisions.
+
+## Compatibility
+
+OHD does not create a competing trace propagation header. `traceparent` and `tracestate` remain the wire format.

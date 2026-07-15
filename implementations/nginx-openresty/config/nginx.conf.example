@@ -1,2 +1,0 @@
-# Placeholder NGINX configuration for Open HTTP Diagnostics.
-# Future work: integrate OpenResty Lua modules for traceparent enforcement and response diagnostics.

@@ -1,23 +1,17 @@
 # Security Policy
 
-Open HTTP Diagnostics is intended to improve troubleshooting without exposing sensitive infrastructure details.
+Open HTTP Diagnostics handles diagnostic data that may contain sensitive information. Implementations must default to the minimum data necessary for troubleshooting.
+
+## Reporting vulnerabilities
+
+Report suspected vulnerabilities privately to the repository owner rather than opening a public issue.
 
 ## Security principles
 
-- Do not expose internal hostnames.
-- Do not expose private IP addresses.
-- Do not expose cloud account IDs, subscription IDs, project IDs, or tenant IDs.
-- Do not expose EC2 instance IDs, container IDs, Kubernetes pod names, or node names by default.
-- Do not expose usernames, session IDs, authorization headers, cookies, or application secrets.
-- Use opaque owner-defined identifiers for diagnostic path labels.
-- Make response path diagnostics optional and disabled by default.
-
-## Recommended response header posture
-
-`OHD-Trace-ID` may be enabled by default where appropriate because it identifies the request, not the infrastructure.
-
-`OHD-Trace-Path` should be optional and disabled by default unless the infrastructure owner has defined safe opaque labels.
-
-## Reporting security issues
-
-Please do not open public issues for security vulnerabilities. Contact the maintainers privately using the preferred contact method listed in the repository.
+- Never log authorization credentials by default.
+- Never log cookies by default.
+- Avoid logging raw query strings unless explicitly enabled and filtered.
+- Treat trace identifiers as correlation data, not authentication secrets.
+- Do not expose internal hostnames, private addresses, cloud resource identifiers, or platform names in response diagnostics.
+- Use explicit allowlists for deep diagnostic capture.
+- Apply retention, access control, and transport protection appropriate to production logs.

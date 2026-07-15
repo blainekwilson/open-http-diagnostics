@@ -1,26 +1,21 @@
 # Security Considerations
 
-Open HTTP Diagnostics must avoid turning troubleshooting headers or logs into an information disclosure issue.
+## Untrusted trace input
 
-## Response headers
+Trace Context received from a client is untrusted. It may be malformed, intentionally duplicated, reused, or selected to create excessive log cardinality. Implementations must validate it and must not use it for access control.
 
-Response-visible diagnostics should use support-safe identifiers.
+## Log injection
 
-Safe examples:
+Header and URI values may contain characters intended to corrupt line-oriented logs. Implementations must escape or normalize control characters and delimiters.
 
-```http
-OHD-Trace-ID: 4bf92f3577b34da6a3ce929d0e0e4736
-OHD-Trace-Path: edge="a1"; waf="b2"; app="123"
-```
+## Sensitive data
 
-Unsafe examples:
+Access logging can expose personal data, secrets, and session information. Canonical fields do not include authorization headers, cookies, or request bodies. Recommended query logging must be assessed carefully.
 
-```http
-OHD-Trace-Path: proxy="ip-10-1-2-3.ec2.internal"
-OHD-Trace-Path: app="i-0123456789abcdef0"
-OHD-Trace-Path: pod="checkout-api-7d8f9c5c9b-x4n2p"
-```
+## Response disclosure
 
-## Logs
+The trace ID is intended to be opaque. Response diagnostics must not expose topology, hostnames, addresses, cloud identifiers, software versions, or internal routing policy.
 
-Logs should avoid raw secrets and should follow organizational data retention and privacy requirements.
+## Sampling and denial of service
+
+Deep diagnostics can consume CPU, memory, disk, and network capacity. Implementations should support limits, sampling, bounded capture sizes, and emergency disable controls.

@@ -1,0 +1,14 @@
+timestamp
+client_ip
+method
+host
+path
+status
+duration
+traceparent
+query
+protocol
+bytes_sent
+referer
+user_agent
+tracestate

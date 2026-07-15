@@ -1,11 +1,14 @@
-# NGINX/OpenResty Implementation
+# OHD for NGINX/OpenResty
 
-This implementation is intended to become the first full reference implementation for Levels 1-4.
+This directory is the planned first reference implementation for OHD Levels 2 through 4.
 
-Planned capabilities:
+## Planned modules
 
-- Log W3C `traceparent`.
-- Generate `traceparent` when missing.
-- Emit `OHD-Trace-ID` response header.
-- Optionally emit `OHD-Trace-Path` using safe opaque labels.
-- Support Level 4 deep diagnostics based on the existing FRT work.
+- `trace_context/` — validate, generate, and propagate W3C Trace Context.
+- `response_diagnostics/` — return `OHD-Trace-ID` when enabled.
+- `deep_diagnostics/` — migrated Failed Request Trace functionality.
+- `logging/` — shared variables and structured diagnostic output that complement native NGINX access logs.
+
+Level 1 should normally be implemented with native NGINX configuration documented under `platforms/nginx/level-1.md`.
+
+The original FRT code should be migrated here without changing the top-level repository structure.

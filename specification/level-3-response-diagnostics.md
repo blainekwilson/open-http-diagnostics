@@ -1,12 +1,15 @@
-# Response Diagnostics
+# Level 3 — Response Diagnostics
+
+**Status:** Initial draft  
+**Level:** 3
 
 ## Purpose
 
-Response diagnostics allow a client or support engineer to identify the trace used for a request without requiring access to internal logs.
+Level 3 provides optional client-visible values that allow a user or support team to identify the trace associated with an HTTP response.
 
-## OHD-Trace-ID
+## Response trace identifier
 
-`OHD-Trace-ID` is an optional response header containing the trace ID associated with the request.
+An implementation may return the effective trace ID in a response field named `OHD-Trace-ID`.
 
 Example:
 
@@ -14,20 +17,21 @@ Example:
 OHD-Trace-ID: 4bf92f3577b34da6a3ce929d0e0e4736
 ```
 
-Recommended behavior:
+The response contains the trace ID only, not the complete `traceparent`, because the parent ID can change at each hop.
 
-1. If a participating component generates a new `traceparent`, it should return `OHD-Trace-ID` unless disabled.
-2. If a valid `traceparent` was received, returning `OHD-Trace-ID` is optional.
-3. If `OHD-Trace-ID` already exists, participants should not overwrite it unless explicitly configured.
+## Recommended behavior
 
-## OHD-Trace-Path
+- When the participating layer generated a trace because none was available, it should return `OHD-Trace-ID` unless disabled by policy.
+- An implementation may return the value for all requests for operational consistency.
+- A layer must not overwrite a different response value without an explicit precedence policy.
+- The header is diagnostic only and must not be used as proof of identity or authorization.
 
-`OHD-Trace-Path` is an optional response header containing safe, opaque path hints.
+## Path and layer hints
 
-Example:
+A response-visible path feature remains experimental and is disabled by default. Any future form must use opaque, owner-defined identifiers and must not expose hostnames, IP addresses, cloud resource IDs, account IDs, software versions, or internal topology.
 
-```http
-OHD-Trace-Path: edge="a1"; waf="b2"; proxy="c3"; app="123"
-```
+The initial Level 3 profile standardizes the trace identifier first. Path diagnostics may be proposed separately after practical implementation and security review.
 
-This header is disabled by default. It must not expose hostnames, IP addresses, account IDs, instance IDs, pod names, or other sensitive infrastructure details.
+## Browser access
+
+Applications using cross-origin browser requests may need to expose the response field using CORS response configuration before JavaScript can read it.

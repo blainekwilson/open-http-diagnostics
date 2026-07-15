@@ -1,2 +1,0 @@
-#Fields: date time s-ip cs-method cs-uri-stem sc-status traceparent ohd-trace-id
-2026-06-30 17:00:00 10.0.0.10 GET / 200 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01 4bf92f3577b34da6a3ce929d0e0e4736
