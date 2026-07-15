@@ -1,32 +1,33 @@
 # Roadmap
 
-## Phase 1: Specification and Level 1 configuration
+## Phase 1 — Freeze Level 1
 
-- Define the Common HTTP Diagnostics Logging Profile.
-- Document W3C Trace Context usage.
-- Provide IIS W3C logging configuration scripts.
-- Provide examples for IIS, NGINX, Apache, and application frameworks.
+- Finalize canonical Level 1 field names and semantics.
+- Validate field availability across IIS, NGINX, Apache HTTP Server, Envoy, and HAProxy.
+- Publish IIS and NGINX configuration guides.
+- Add configuration validation scripts.
 
-## Phase 2: Trace Context enforcement
+## Phase 2 — Define Trace Context enforcement
 
-- Provide reference implementations that create `traceparent` when missing.
-- Preserve existing valid `traceparent` headers.
-- Define consistent log field names for extracted trace fields.
+- Specify validation of incoming `traceparent`.
+- Specify generation when missing or invalid.
+- Define common log fields for trace ID, parent ID, flags, and source.
+- Implement the profile first in OpenResty.
 
-## Phase 3: Response diagnostics
+## Phase 3 — Response diagnostics
 
-- Define `OHD-Trace-ID` response behavior.
-- Define optional `OHD-Trace-Path` response behavior.
-- Document security considerations and safe opaque labeling.
+- Define an optional response trace identifier.
+- Define safe overwrite and precedence rules.
+- Evaluate an optional, higher-level path diagnostic without requiring infrastructure disclosure.
 
-## Phase 4: Deep diagnostics
+## Phase 4 — Deep diagnostics
 
-- Migrate Failed Request Trace concepts into the Level 4 profile.
-- Implement NGINX/OpenResty deep diagnostics.
-- Add examples showing correlation between access logs, response headers, and deep traces.
+- Migrate and adapt the Failed Request Trace prototype.
+- Correlate deep diagnostic records using W3C Trace Context.
+- Add security controls for sensitive headers, query parameters, cookies, and bodies.
 
-## Phase 5: Conformance
+## Phase 5 — Conformance and broader platforms
 
-- Build conformance tests.
-- Add sample expected outputs.
-- Publish compatibility matrix by platform.
+- Add conformance fixtures and parsers.
+- Add Apache, Envoy, HAProxy, ASP.NET Core, Flask, and native NGINX support.
+- Evaluate an Internet-Draft after multiple independent implementations exist.

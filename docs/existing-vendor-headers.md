@@ -1,19 +1,15 @@
-# Existing Vendor Headers
+# Existing Vendor and Platform Headers
 
-This document tracks existing vendor-specific headers and logging fields that may help with HTTP diagnostics.
+This document tracks existing request and response correlation fields. It is descriptive, not normative.
 
-## Examples to research
+Examples to research and document include:
 
-- AWS CloudFront response headers
-- AWS Application Load Balancer access logs
-- AWS API Gateway request IDs
-- Azure Front Door headers
-- Imperva Cloud WAF headers and logs
-- F5 headers and logging options
-- NGINX variables and log formats
-- Apache LogFormat request and response header fields
-- IIS W3C custom logging fields
+- CloudFront request identifiers;
+- AWS X-Ray trace headers;
+- API Gateway request identifiers;
+- load-balancer generated request IDs;
+- WAF transaction identifiers;
+- reverse-proxy request ID conventions;
+- framework-specific correlation IDs.
 
-## Purpose
-
-The goal is not to replace vendor-specific diagnostics. The goal is to map existing capabilities into a common diagnostic profile.
+The objective is to map existing identifiers to OHD without replacing useful native telemetry.

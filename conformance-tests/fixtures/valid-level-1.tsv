@@ -1,0 +1,4 @@
+#OpenHTTPDiagnostics: 0.3
+#Level: 1
+#Fields: timestamp client_ip method host path status duration traceparent query protocol bytes_sent referer user_agent tracestate
+2026-07-14T20:15:12+00:00	203.0.113.15	GET	example.com	/products	200	0.018	00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01	id=123	HTTP/2.0	4281	-	curl/8.7.1	-

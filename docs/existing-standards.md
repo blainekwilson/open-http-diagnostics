@@ -1,13 +1,19 @@
 # Existing Standards
 
+OHD is designed to complement existing standards and formats.
+
 ## W3C Trace Context
 
-Open HTTP Diagnostics uses W3C Trace Context for request correlation. The primary request header is `traceparent`.
+Defines `traceparent` and `tracestate` propagation. OHD Level 2 uses these fields and does not define a competing request propagation header.
+
+## W3C Extended Log File Format
+
+Provides a widely used self-describing text log pattern, including `#Fields` metadata. OHD borrows the concept of self-describing records but defines platform-neutral semantic field names.
 
 ## OpenTelemetry
 
-OpenTelemetry commonly uses W3C Trace Context for propagation. Open HTTP Diagnostics is complementary to OpenTelemetry and focuses on consistent infrastructure logging and operational diagnostics.
+Provides APIs, SDKs, semantic conventions, and telemetry pipelines. OHD focuses on lightweight HTTP infrastructure configuration and interoperable diagnostic behavior; it can feed or complement OpenTelemetry deployments.
 
-## HTTP structured fields
+## HTTP Structured Fields
 
-Future versions of `OHD-Trace-Path` may use structured field syntax for safer parsing.
+May be considered for future response diagnostics if a structured multi-value response field is standardized.

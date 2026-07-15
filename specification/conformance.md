@@ -1,19 +1,33 @@
 # Conformance
 
-This document will define conformance levels for Open HTTP Diagnostics.
+Conformance is declared per level and per implementation or platform configuration.
 
-## Level 1 conformance
+## Level 1
 
-A platform is Level 1 conformant when it can log the required Common HTTP Diagnostics fields available to that platform, including the `traceparent` request header where supported.
+A conforming Level 1 deployment:
 
-## Level 2 conformance
+- produces the eight canonical fields defined by Level 1;
+- preserves their defined meaning;
+- uses canonical field names in structured formats;
+- places extension fields after canonical and recommended fields in positional formats;
+- documents missing-value and unit behavior.
 
-A platform is Level 2 conformant when it can create a valid `traceparent` if one is missing or invalid, preserve valid incoming `traceparent` values, and log the resulting trace context.
+## Level 2
 
-## Level 3 conformance
+A conforming Level 2 implementation also validates, creates when necessary, propagates, and logs W3C Trace Context.
 
-A platform is Level 3 conformant when it supports optional response diagnostics such as `OHD-Trace-ID` and, if enabled, `OHD-Trace-Path`.
+## Level 3
 
-## Level 4 conformance
+A conforming Level 3 implementation follows the response trace identifier rules and documents whether the feature is enabled by default.
 
-A platform is Level 4 conformant when it supports deep diagnostics correlated by the same trace ID used in Level 1 logs.
+## Level 4
+
+A conforming Level 4 implementation correlates deep diagnostic output with the effective trace ID and implements the security controls in the Level 4 and security documents.
+
+## Claims
+
+Projects should make scoped claims such as:
+
+> NGINX configuration example conforms to OHD Level 1 Draft 0.3.
+
+They should not claim broad platform conformance when support depends on optional modules or application code.

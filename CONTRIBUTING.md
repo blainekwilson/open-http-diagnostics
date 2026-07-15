@@ -1,19 +1,24 @@
 # Contributing
 
-Contributions are welcome.
+Contributions are welcome, especially platform mappings, configuration examples, conformance fixtures, and security review.
 
-Good early contributions include:
+## Repository rules
 
-- Platform-specific logging configuration examples.
-- Safe default field mappings.
-- Implementations that create or preserve W3C `traceparent`.
-- Examples showing how to correlate logs across layers.
-- Security reviews of response header behavior.
+1. Normative requirements belong only in `specification/`.
+2. Platform documents must reference the specification rather than restating it.
+3. Implementation documentation should describe installation, configuration, and behavior specific to that implementation.
+4. Examples are non-normative.
+5. Do not add new top-level directories without an architecture decision record.
 
-## Design expectations
+## Changes to canonical fields
 
-- Build on W3C Trace Context.
-- Prefer configuration over code where a platform already supports the needed behavior.
-- Keep infrastructure identifiers opaque and owner-defined.
-- Avoid vendor lock-in.
-- Separate normative specification from implementation guidance.
+A change to a canonical field name, order, unit, or meaning affects every platform. Proposals should include:
+
+- the operational problem being solved;
+- evidence that major platforms can produce the field;
+- migration impact;
+- updates to conformance fixtures.
+
+## Security
+
+Do not submit examples containing real credentials, session cookies, tokens, private hostnames, private IP addresses, account identifiers, or customer data.
