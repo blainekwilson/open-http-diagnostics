@@ -1,23 +1,41 @@
 # Repository Structure
 
-The following top-level structure is frozen for the initial project lifecycle:
+The repository structure is considered stable.
 
-```text
-specification/       Normative OHD behavior
-platforms/           Product-specific conformance guides
-implementations/     Code that adds missing behavior
-examples/            Non-normative samples
-conformance-tests/   Validation fixtures and tests
-docs/                Architecture and rationale
-```
+## Root files
 
-## Placement rules
+- `README.md` — project landing page and reading order
+- `ROADMAP.md` — milestones and sequencing
+- `SECURITY.md` — vulnerability reporting and project security principles
+- `CONTRIBUTING.md` — contribution rules
+- `CHANGELOG.md` — notable project changes
 
-- A new normative requirement goes in `specification/`.
-- A configuration recipe for a product goes in `platforms/<product>/`.
-- New executable middleware, modules, or libraries go in `implementations/<name>/`.
-- Sample logs and configurations go in `examples/`.
-- Tests for specification claims go in `conformance-tests/`.
-- Design rationale and project history go in `docs/`.
+## Directories
 
-`profiles/` and `guides/` are intentionally not used because they previously overlapped with specification and platform documentation.
+### `specification/`
+
+The only normative source. Header formats, level requirements, conformance, and security requirements are defined here.
+
+### `platforms/`
+
+Product-specific configuration, mappings, limitations, and helper scripts. Platform documents link to the specification instead of restating it.
+
+### `implementations/`
+
+Source code for middleware, modules, and other components that add behavior not available through native configuration.
+
+### `examples/`
+
+Sample requests, responses, logs, and configurations. Examples are non-normative.
+
+### `conformance-tests/`
+
+Schemas, fixtures, and executable validators.
+
+### `docs/`
+
+Architecture, rationale, design principles, standards research, and FAQ.
+
+## Change rule
+
+Do not add another top-level directory unless existing boundaries cannot reasonably hold the work and an architecture decision explains why.

@@ -1,3 +1,5 @@
 # NGINX Level 4
 
-The existing Failed Request Trace prototype is planned for migration into the OpenResty implementation and will be correlated by W3C trace ID.
+The OpenResty reference implementation is the planned home for the migrated Failed Request Trace capability. A future native NGINX module may implement a subset.
+
+Authoritative behavior: [Level 4 specification](../../specification/level-4-deep-diagnostics.md).

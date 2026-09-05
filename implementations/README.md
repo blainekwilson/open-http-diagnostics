@@ -1,12 +1,10 @@
 # Reference Implementations
 
-This directory contains software that adds OHD behavior not available through native platform configuration.
+This directory contains code that adds behavior unavailable through native configuration.
 
-Implementation directories may contain code, build files, tests, and implementation-specific usage documentation. They must not redefine the OHD specification.
+- `nginx-openresty/` — first reference implementation for Levels 2–4
+- `nginx-module/` — planned native C module
+- `aspnet-core/` — planned middleware and second independent implementation
+- `flask/` — planned middleware
 
-Planned implementations:
-
-- `nginx-openresty/` — Lua-based first reference implementation and FRT migration target.
-- `nginx-module/` — native C module, planned.
-- `aspnet-core/` — middleware, planned.
-- `flask/` — middleware, planned.
+Implementation READMEs describe installation and implementation-specific behavior. Normative requirements remain in `specification/`.

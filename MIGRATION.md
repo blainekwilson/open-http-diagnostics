@@ -1,29 +1,28 @@
-# Migration from the Current Repository
+# Migration Notes for Draft 0.4
 
-This rebuilt package intentionally removes overlapping top-level categories.
+The uploaded repository already uses the stable top-level structure. No directory redesign is required.
 
-## Move or merge
+## Specification changes
 
-| Current location | New location |
-|---|---|
-| `profiles/level-1-common-logging.md` | Merge into `specification/level-1-common-access-logging.md` |
-| `profiles/level-2-trace-context.md` | Merge into `specification/level-2-trace-context.md` |
-| `profiles/level-3-response-diagnostics.md` | Merge into `specification/level-3-response-diagnostics.md` |
-| `profiles/level-4-deep-diagnostics.md` | Merge into `specification/level-4-deep-diagnostics.md` |
-| `specification/common-access-log.md` | Superseded by the Level 1 specification |
-| `specification/common-logging-profile.md` | Superseded by the Level 1 specification |
-| `guides/nginx/logging.md` | Replace with `platforms/nginx/level-1.md` |
-| `implementations/iis/` configuration and scripts | Move to `platforms/iis/` |
-| Existing FRT/OpenResty code | Move under `implementations/nginx-openresty/deep_diagnostics/` and related implementation folders |
-| `docs/examples.md` | Move examples into `examples/`; retain rationale only if needed |
+- Add `specification/header-fields.md` as the single authoritative definition of `traceparent`, `tracestate`, and `OHD-Trace-ID` use within OHD.
+- Add `tracestate` and `ohd_trace_id` to the Level 1 canonical fields.
+- Update Levels 2–4 to use the same trace identity.
 
-## Remove after migration
+## Platform changes
 
-- `profiles/`
-- `guides/`
-- duplicate Level 1 specification files
-- platform configuration stored under `implementations/`
+- IIS scripts now configure all three request-header logging fields.
+- NGINX and Apache examples now log all three fields in the same canonical positions.
 
-## Preserve history
+## Fixture changes
 
-For a Git migration, use `git mv` where practical so file history remains visible. Migrate code in a separate commit from documentation rewrites to make review easier.
+Level 1 positional records now begin with:
+
+```text
+timestamp client_ip method host path status duration traceparent tracestate ohd_trace_id
+```
+
+Recommended fields follow, and platform extension fields remain at the end.
+
+## Deployment caution
+
+Level 1 only records incoming fields. Adding `OHD-Trace-ID` to logging does not guarantee it exists. Deploy Level 2 at an appropriate trusted layer to establish and propagate the value.
