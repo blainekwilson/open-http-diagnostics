@@ -6,9 +6,10 @@ path
 status
 duration
 traceparent
+tracestate
+ohd_trace_id
 query
 protocol
 bytes_sent
 referer
 user_agent
-tracestate

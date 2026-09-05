@@ -1,31 +1,52 @@
 # Architecture
 
-OHD is a specification with platform mappings and reference implementations.
+Open HTTP Diagnostics is a conformance specification supported by platform mappings, optional implementations, examples, and tests.
 
 ```text
 W3C Trace Context
         |
         v
-OHD specification
-  Level 1: common access logging
-  Level 2: trace-context enforcement
-  Level 3: optional response diagnostics
-  Level 4: deep diagnostics
++-------------------------------+
+| OHD Header Field Definitions  |
++-------------------------------+
         |
-        +--> platform configuration guides
-        |
-        +--> reference implementations
-        |
-        +--> conformance tests
+        +--> Level 1: common access logging
+        +--> Level 2: establish and propagate trace context
+        +--> Level 3: return OHD-Trace-ID
+        +--> Level 4: selective deep diagnostics
 ```
 
-The specification is the product. Platform configuration and code demonstrate that the specification can be adopted across heterogeneous infrastructure.
+## One trace identity
 
-## Data flow
+OHD does not create a parallel tracing system.
 
-1. A request may arrive with `traceparent`.
-2. Level 1 logs the value when present.
-3. A Level 2 participant validates it or creates a new trace, then propagates context downstream.
-4. Each participating layer logs the effective trace ID.
-5. Level 3 may return the trace ID to the client.
-6. Level 4 records deeper diagnostics using the same trace ID.
+- `traceparent` is authoritative.
+- `tracestate` carries W3C vendor state.
+- `OHD-Trace-ID` is the trace ID extracted from the effective `traceparent`.
+
+The same trace ID correlates request headers, access logs, downstream calls, response diagnostics, and deep diagnostic records.
+
+## Repository boundaries
+
+```text
+specification/      normative behavior
+platforms/          configuration and product mappings
+implementations/    code that supplies missing behavior
+examples/           non-normative samples
+conformance-tests/  fixtures and executable validators
+docs/               architecture and rationale
+```
+
+These top-level boundaries are intentionally stable.
+
+## Platform versus implementation
+
+A platform guide answers: "How far can this product conform using native capabilities?"
+
+An implementation answers: "What code supplies behavior the platform does not provide natively?"
+
+For example, NGINX configuration can log incoming trace fields at Level 1. OpenResty or a native NGINX module is needed to validate or create Trace Context at Level 2.
+
+## Extension strategy
+
+New products are added under `platforms/`. New code is added under `implementations/`. New normative requirements require specification review and conformance updates rather than a new top-level directory.

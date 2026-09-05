@@ -1,16 +1,54 @@
 [CmdletBinding()]
-param([string]$SiteName = "Default Web Site")
+param(
+    [Parameter()]
+    [ValidateNotNullOrEmpty()]
+    [string]$SiteName = 'Default Web Site',
 
+    [Parameter()]
+    [switch]$FailOnNonConformance
+)
+
+Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 Import-Module WebAdministration -ErrorAction Stop
-$filter = "system.applicationHost/sites/site[@name='$SiteName']/logFile/customFields/add"
-$fields = Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter $filter -Name '.'
+Get-Website -Name $SiteName -ErrorAction Stop | Out-Null
 
-$traceParent = $fields | Where-Object { $_.logFieldName -eq 'traceparent' -and $_.sourceName -eq 'traceparent' }
-$traceState = $fields | Where-Object { $_.logFieldName -eq 'tracestate' -and $_.sourceName -eq 'tracestate' }
+$siteFilter = "system.applicationHost/sites/site[@name='$SiteName']"
+$logFormat = [string](Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter "$siteFilter/logFile" -Name 'logFormat').Value
+$fields = @(Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter "$siteFilter/logFile/customFields/add" -Name '.' -ErrorAction SilentlyContinue)
 
-[pscustomobject]@{
+$expected = @(
+    @{ LogFieldName = 'traceparent';  SourceName = 'traceparent' },
+    @{ LogFieldName = 'tracestate';   SourceName = 'tracestate' },
+    @{ LogFieldName = 'ohd_trace_id'; SourceName = 'OHD-Trace-ID' }
+)
+
+$checks = foreach ($item in $expected) {
+    $match = $fields | Where-Object {
+        [string]$_.logFieldName -ieq $item.LogFieldName -and
+        [string]$_.sourceName -ieq $item.SourceName -and
+        [string]$_.sourceType -ieq 'RequestHeader'
+    }
+    [pscustomobject]@{
+        Field       = $item.LogFieldName
+        Source      = $item.SourceName
+        Configured  = [bool]$match
+    }
+}
+
+$result = [pscustomobject]@{
     SiteName          = $SiteName
-    TraceParentLogged = [bool]$traceParent
-    TraceStateLogged  = [bool]$traceState
+    LogFormat         = $logFormat
+    UsesW3C           = ($logFormat -eq 'W3C')
+    TraceParentLogged = [bool]($checks | Where-Object Field -eq 'traceparent').Configured
+    TraceStateLogged  = [bool]($checks | Where-Object Field -eq 'tracestate').Configured
+    OhdTraceIdLogged  = [bool]($checks | Where-Object Field -eq 'ohd_trace_id').Configured
+    Conforms          = ($logFormat -eq 'W3C' -and -not ($checks.Configured -contains $false))
+}
+
+$result
+$checks | Format-Table -AutoSize
+
+if ($FailOnNonConformance -and -not $result.Conforms) {
+    throw "IIS site '$SiteName' does not conform to the OHD Level 1 custom-field requirements."
 }

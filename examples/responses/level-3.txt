@@ -1,5 +1,5 @@
-HTTP/1.1 500 Internal Server Error
-OHD-Trace-ID: 4bf92f3577b34da6a3ce929d0e0e4736
+HTTP/1.1 200 OK
 Content-Type: application/json
+OHD-Trace-ID: 4bf92f3577b34da6a3ce929d0e0e4736
 
-{"error":"request failed"}
+{"status":"ok"}

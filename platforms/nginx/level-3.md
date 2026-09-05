@@ -1,3 +1,7 @@
 # NGINX Level 3
 
-Response trace diagnostics require access to the effective trace ID and are planned for the OpenResty and native NGINX implementations.
+Level 3 requires a reliable effective trace ID from Level 2 and emits one `OHD-Trace-ID` response field.
+
+Native `add_header` can emit a configured variable, but creation and validation of that variable require a Level 2 implementation such as OpenResty or a native module.
+
+Authoritative behavior: [Level 3 specification](../../specification/level-3-response-diagnostics.md).

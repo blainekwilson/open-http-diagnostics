@@ -1,33 +1,40 @@
 # Roadmap
 
-## Phase 1 — Freeze Level 1
+## Milestone 0.4 — Consistent trace fields
 
-- Finalize canonical Level 1 field names and semantics.
-- Validate field availability across IIS, NGINX, Apache HTTP Server, Envoy, and HAProxy.
-- Publish IIS and NGINX configuration guides.
-- Add configuration validation scripts.
+- Define `OHD-Trace-ID` once in `specification/header-fields.md`.
+- Align Levels 1–4 around `traceparent`, `tracestate`, and `OHD-Trace-ID`.
+- Update IIS, NGINX, and Apache Level 1 mappings.
+- Add valid, missing, malformed, and conflicting-value fixtures.
+- Add executable Level 1 validation.
 
-## Phase 2 — Define Trace Context enforcement
+## Milestone 0.5 — Complete Level 1
 
-- Specify validation of incoming `traceparent`.
-- Specify generation when missing or invalid.
-- Define common log fields for trace ID, parent ID, flags, and source.
-- Implement the profile first in OpenResty.
+- Validate field availability and units across IIS, NGINX, Apache, Envoy, and HAProxy.
+- Publish tested configuration helpers.
+- Document native-format deviations.
+- Add CI for Markdown links, PowerShell syntax, configuration linting where tools are available, and TSV fixtures.
 
-## Phase 3 — Response diagnostics
+## Milestone 0.6 — OpenResty Levels 2 and 3
 
-- Define an optional response trace identifier.
-- Define safe overwrite and precedence rules.
-- Evaluate an optional, higher-level path diagnostic without requiring infrastructure disclosure.
+- Validate or establish W3C Trace Context.
+- Derive and propagate `OHD-Trace-ID`.
+- Return `OHD-Trace-ID` in responses.
+- Add automated request/response tests.
 
-## Phase 4 — Deep diagnostics
+## Milestone 0.7 — Deep diagnostics
 
-- Migrate and adapt the Failed Request Trace prototype.
-- Correlate deep diagnostic records using W3C Trace Context.
-- Add security controls for sensitive headers, query parameters, cookies, and bodies.
+- Migrate Failed Request Trace into the OpenResty implementation.
+- Correlate records using the effective trace ID.
+- Add allowlists, redaction, bounded capture, and activation controls.
 
-## Phase 5 — Conformance and broader platforms
+## Milestone 0.8 — Independent implementation
 
-- Add conformance fixtures and parsers.
-- Add Apache, Envoy, HAProxy, ASP.NET Core, Flask, and native NGINX support.
-- Evaluate an Internet-Draft after multiple independent implementations exist.
+- Add ASP.NET Core or Flask support for Levels 2 and 3.
+- Resolve specification ambiguities revealed by the second implementation.
+
+## Milestone 1.0 — Draft profile release
+
+- Freeze Level 1–3 behavior.
+- Publish conformance results for at least two independent implementations.
+- Evaluate provisional HTTP field registration and an Internet-Draft.

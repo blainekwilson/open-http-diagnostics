@@ -1,37 +1,52 @@
 # Level 3 — Response Diagnostics
 
-**Status:** Initial draft  
+**Status:** Draft 0.4  
 **Level:** 3
 
-## Purpose
+## 1. Purpose
 
-Level 3 provides optional client-visible values that allow a user or support team to identify the trace associated with an HTTP response.
+Level 3 returns the trace identifier used by the participating infrastructure so a client, support engineer, or automated test can report the exact value used for log correlation.
 
-## Response trace identifier
+## 2. Response field
 
-An implementation may return the effective trace ID in a response field named `OHD-Trace-ID`.
-
-Example:
+A Level 3 participant returns:
 
 ```http
 OHD-Trace-ID: 4bf92f3577b34da6a3ce929d0e0e4736
 ```
 
-The response contains the trace ID only, not the complete `traceparent`, because the parent ID can change at each hop.
+The value must comply with [OHD HTTP Header Fields](header-fields.md) and equal the effective trace ID established at Level 2.
 
-## Recommended behavior
+## 3. Required behavior
 
-- When the participating layer generated a trace because none was available, it should return `OHD-Trace-ID` unless disabled by policy.
-- An implementation may return the value for all requests for operational consistency.
-- A layer must not overwrite a different response value without an explicit precedence policy.
-- The header is diagnostic only and must not be used as proof of identity or authorization.
+A Level 3 participant:
 
-## Path and layer hints
+1. obtains the effective trace ID from its Level 2 processing context;
+2. sets one `OHD-Trace-ID` response field;
+3. does not append multiple values;
+4. replaces a conflicting upstream value with the authoritative effective trace ID;
+5. treats the field as diagnostic data only.
 
-A response-visible path feature remains experimental and is disabled by default. Any future form must use opaque, owner-defined identifiers and must not expose hostnames, IP addresses, cloud resource IDs, account IDs, software versions, or internal topology.
+An implementation may allow response emission to be disabled by policy, but enabled is the recommended OHD profile.
 
-The initial Level 3 profile standardizes the trace identifier first. Path diagnostics may be proposed separately after practical implementation and security review.
+## 4. Why the complete `traceparent` is not returned
 
-## Browser access
+The parent ID can change between hops. Returning only the trace ID provides stable correlation without exposing span-specific state or trace flags.
 
-Applications using cross-origin browser requests may need to expose the response field using CORS response configuration before JavaScript can read it.
+## 5. Browser access
+
+Browser JavaScript may require:
+
+```http
+Access-Control-Expose-Headers: OHD-Trace-ID
+```
+
+for cross-origin responses. The exact CORS policy remains under application-owner control.
+
+## 6. Caching
+
+`OHD-Trace-ID` is request-specific. Shared caches must not replay a cached diagnostic identifier as though it belonged to a later request. Implementations should add or replace the field after cache lookup when possible, or disable it where the caching architecture cannot preserve correct semantics.
+
+## 7. Path diagnostics
+
+Infrastructure-path disclosure is not part of the initial Level 3 profile. It remains an experimental future extension requiring separate security and interoperability review.

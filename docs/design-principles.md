@@ -1,10 +1,12 @@
 # Design Principles
 
-1. **Build on standards.** Use W3C Trace Context rather than a competing request identifier.
-2. **Configuration before code.** Document native platform capabilities before creating libraries or modules.
-3. **Smallest useful common profile.** Require only fields major platforms can produce.
-4. **One source of truth.** Field names and behavior are defined only in `specification/`.
-5. **Incremental adoption.** Each level provides value independently.
-6. **Secure defaults.** Do not collect or disclose sensitive infrastructure or application data by default.
-7. **Stable structure.** Add content inside established categories rather than reorganizing the repository.
-8. **Operational usefulness.** Optimize for troubleshooting real HTTP requests across layers.
+1. **Build on standards.** Use W3C Trace Context rather than creating a competing propagation protocol.
+2. **One identity.** `OHD-Trace-ID` is a projection of the W3C trace ID, never an independent identifier.
+3. **Configuration before code.** Document native platform capabilities before creating modules or middleware.
+4. **Incremental adoption.** Each OHD level provides value independently while building on lower levels.
+5. **Specification once.** Normative requirements appear only in `specification/`.
+6. **Secure defaults.** Avoid credentials, cookies, bodies, internal topology, and uncontrolled query capture.
+7. **Operational usefulness.** Optimize for support engineers who begin with a raw HTTP request, response, or access-log record.
+8. **Stable repository boundaries.** Add content within the frozen structure instead of repeatedly reorganizing the project.
+9. **Portable semantics.** Standardize meaning before attempting identical native syntax on every product.
+10. **Testable requirements.** Every normative behavior should eventually have a fixture or executable conformance test.

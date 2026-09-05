@@ -1,33 +1,45 @@
 # Conformance
 
-Conformance is declared per level and per implementation or platform configuration.
+**Status:** Draft 0.4
+
+## General rules
+
+- Normative requirements are defined only in `specification/`.
+- Platform guides describe mappings and limitations; they do not redefine OHD.
+- Implementations must declare the OHD levels and draft version they support.
+- Partial support must be described explicitly.
 
 ## Level 1
 
-A conforming Level 1 deployment:
+A Level 1 implementation or mapping must provide the ten canonical fields defined by the Level 1 specification, including `traceparent`, `tracestate`, and `ohd_trace_id`.
 
-- produces the eight canonical fields defined by Level 1;
-- preserves their defined meaning;
-- uses canonical field names in structured formats;
-- places extension fields after canonical and recommended fields in positional formats;
-- documents missing-value and unit behavior.
+For positional OHD-native formats, canonical fields must appear first and in the defined order. Native formats with fixed names or ordering may conform through a documented mapping.
 
 ## Level 2
 
-A conforming Level 2 implementation also validates, creates when necessary, propagates, and logs W3C Trace Context.
+A Level 2 implementation must demonstrate:
+
+- continuation of usable incoming Trace Context;
+- establishment of a new trace when no usable context exists;
+- derivation of `OHD-Trace-ID` from the effective trace ID;
+- correction of a conflicting convenience value;
+- downstream propagation of all applicable fields.
 
 ## Level 3
 
-A conforming Level 3 implementation follows the response trace identifier rules and documents whether the feature is enabled by default.
+A Level 3 implementation must demonstrate that the response contains exactly one `OHD-Trace-ID` matching the effective trace ID for the request.
 
 ## Level 4
 
-A conforming Level 4 implementation correlates deep diagnostic output with the effective trace ID and implements the security controls in the Level 4 and security documents.
+A Level 4 implementation must demonstrate correlation with the same trace ID, default protection of sensitive data, bounded capture, and selective activation.
 
-## Claims
+## Version claims
 
-Projects should make scoped claims such as:
+A conformance claim should identify:
 
-> NGINX configuration example conforms to OHD Level 1 Draft 0.3.
-
-They should not claim broad platform conformance when support depends on optional modules or application code.
+```text
+OHD-Draft: 0.4
+OHD-Levels: 1,2,3
+Platform: nginx-openresty
+Implementation-Version: 0.1.0
+```
