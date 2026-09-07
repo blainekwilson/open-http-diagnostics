@@ -6,8 +6,18 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 dockerfiles=(
     "platforms/nginx/scripts/Dockerfile:ohd-nginx-level-1"
     "platforms/apache/scripts/Dockerfile:ohd-apache-level-1"
+    "platforms/tomcat/scripts/Dockerfile:ohd-tomcat-level-1"
+    "platforms/flask/scripts/Dockerfile:ohd-flask-level-1"
     "platforms/envoy/scripts/Dockerfile:ohd-envoy-level-1"
     "platforms/haproxy/scripts/Dockerfile:ohd-haproxy-level-1"
+    "platforms/websphere/scripts/Dockerfile:ohd-websphere-level-1"
+)
+
+# WebSphere requires a product/version-specific access-log configuration and
+# an IBM runtime image; build it here, but run it through its documented
+# opt-in harness rather than assuming a generic server configuration.
+runnable_dockerfiles=(
+    "${dockerfiles[@]:0:6}"
 )
 
 build_images() {
@@ -20,7 +30,7 @@ build_images() {
 }
 
 run_images() {
-    for dockerfile in "${dockerfiles[@]}"; do
+    for dockerfile in "${runnable_dockerfiles[@]}"; do
         image="${dockerfile##*:}"
         echo "Running $image"
         docker run --rm "$image"

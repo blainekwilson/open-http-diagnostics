@@ -17,8 +17,14 @@ $site = Get-Website -Name $SiteName -ErrorAction Stop
 $siteFilter = "system.applicationHost/sites/site[@name='$SiteName']"
 $customFieldsFilter = "$siteFilter/logFile/customFields"
 
-$logFormat = Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter "$siteFilter/logFile" -Name 'logFormat'
-if ([string]$logFormat.Value -ne 'W3C') {
+$logFormatValue = Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter "$siteFilter/logFile" -Name 'logFormat'
+if ($logFormatValue.PSObject.Properties['Value']) {
+    $logFormat = [string]$logFormatValue.Value
+}
+else {
+    $logFormat = [string]$logFormatValue
+}
+if ($logFormat -ne 'W3C') {
     throw "Site '$SiteName' must use W3C logging before custom OHD fields can be configured."
 }
 
@@ -55,7 +61,7 @@ Add-OhdCustomField -LogFieldName 'ohd_trace_id' -SourceName 'OHD-Trace-ID'
 
 if ($EnableRecommendedW3CFields) {
     # Standard W3C fields are represented as flags in logExtFileFlags.
-    $recommendedFlags = 'Date,Time,ClientIP,Method,UriStem,UriQuery,HttpStatus,BytesSent,TimeTaken,ServerName,UserAgent,Referer'
+    $recommendedFlags = 'Date,Time,ClientIP,Method,UriStem,UriQuery,HttpStatus,BytesSent,TimeTaken,Host,UserAgent,Referer'
     if ($PSCmdlet.ShouldProcess($SiteName, "Set recommended W3C fields: $recommendedFlags")) {
         Set-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter "$siteFilter/logFile" -Name 'logExtFileFlags' -Value $recommendedFlags
     }

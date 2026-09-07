@@ -29,17 +29,25 @@ IIS controls W3C names and ordering. IIS therefore conforms through a documented
 
 ## Automated configuration
 
-Run from an elevated Windows PowerShell session on the IIS server:
+Run from an elevated Windows PowerShell 5.1 session on the IIS server. The all-site script configures every IIS website that uses W3C logging:
 
 ```powershell
-.\scripts\Enable-OhdIisLogging.ps1 -SiteName "Default Web Site" -EnableRecommendedW3CFields
+.\scripts\Configure-OhdIisLogging.ps1 -EnableRecommendedW3CFields
 ```
 
-Validate configuration:
+IIS keeps the logs in its native per-site W3C directories, normally:
+
+```text
+C:\inetpub\logs\LogFiles\W3SVC<site-id>\
+```
+
+This avoids mixing records from different sites and requires no custom log service. Validate every site and send the test request with:
 
 ```powershell
-.\scripts\Test-OhdIisLogging.ps1 -SiteName "Default Web Site"
+\.scripts\Verify-OhdIisLogging.ps1 -FailOnNonConformance
 ```
+
+The existing `Enable-OhdIisLogging.ps1` and `Test-OhdIisLogging.ps1` scripts remain available for single-site administration.
 
 Remove only OHD custom fields:
 

@@ -1,0 +1,57 @@
+PowerShell script execution
+===========================
+
+These IIS scripts are intended for Windows PowerShell 5.1. If PowerShell reports
+that running scripts is disabled, inspect the effective execution policy first:
+
+    Get-ExecutionPolicy -List
+
+For scripts copied from another computer or mounted from a network share, unblock
+the local script files:
+
+    Unblock-File -Path .\Configure-OhdIisLogging.ps1
+    Unblock-File -Path .\Verify-OhdIisLogging.ps1
+    Unblock-File -Path .\Enable-OhdIisLogging.ps1
+    Unblock-File -Path .\Test-OhdIisLogging.ps1
+    Unblock-File -Path .\Disable-OhdIisLogging.ps1
+
+For a one-time test session, bypass the policy only for the current PowerShell
+process. This does not change the machine or user policy:
+
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    .\Configure-OhdIisLogging.ps1 -EnableRecommendedW3CFields
+    .\Verify-OhdIisLogging.ps1 -FailOnNonConformance
+
+For regular administration, RemoteSigned for the current user is usually the
+smallest persistent change. Run this in a normal PowerShell session:
+
+    Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+
+Then run the scripts from this directory, or provide their full paths:
+
+    .\Configure-OhdIisLogging.ps1 -EnableRecommendedW3CFields
+    .\Verify-OhdIisLogging.ps1 -FailOnNonConformance
+
+Configure-OhdIisLogging.ps1 also requires an elevated PowerShell session because
+it changes IIS configuration. Verify-OhdIisLogging.ps1 does not require elevation
+unless the IIS environment or log-directory permissions require it.
+
+If the effective policy still reports Restricted or AllSigned, check the
+MachinePolicy and UserPolicy entries from Get-ExecutionPolicy -List. Group Policy
+can override local settings; in that case, use the approved signing or execution
+policy provided by the system administrator rather than weakening the policy.
+
+If you see "The property 'Value' cannot be found on this object", execution
+policy is no longer the problem. Some IIS/PowerShell installations return the
+logFormat value directly instead of wrapping it in an object with a Value
+property. Use the current Configure-OhdIisLogging.ps1, which handles both
+return shapes.
+
+If IIS reports that the W3C flags must be a combination of named values, use the
+current scripts. IIS calls the host field `Host`; `ServerName` is not a valid
+IIS W3C flag. A failed run may already have added the OHD custom fields before
+the flag update failed, so rerunning the configuration script is safe.
+
+IIS stores W3C logs in directories named `W3SVC<site-id>`, for example
+`C:\inetpub\logs\LogFiles\W3SVC1`. The verification script waits briefly for
+IIS to flush the request record before checking that directory.

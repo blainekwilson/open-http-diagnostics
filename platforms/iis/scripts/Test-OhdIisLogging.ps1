@@ -14,7 +14,13 @@ Import-Module WebAdministration -ErrorAction Stop
 Get-Website -Name $SiteName -ErrorAction Stop | Out-Null
 
 $siteFilter = "system.applicationHost/sites/site[@name='$SiteName']"
-$logFormat = [string](Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter "$siteFilter/logFile" -Name 'logFormat').Value
+$logFormatValue = Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter "$siteFilter/logFile" -Name 'logFormat'
+if ($logFormatValue.PSObject.Properties['Value']) {
+     $logFormat = [string]$logFormatValue.Value
+}
+else {
+     $logFormat = [string]$logFormatValue
+}
 $fields = @(Get-WebConfigurationProperty -PSPath 'MACHINE/WEBROOT/APPHOST' -Filter "$siteFilter/logFile/customFields/add" -Name '.' -ErrorAction SilentlyContinue)
 
 $expected = @(
