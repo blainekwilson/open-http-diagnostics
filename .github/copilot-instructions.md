@@ -43,6 +43,7 @@ Open HTTP Diagnostics (OHD) is a specification-first project for portable HTTP d
 ## Security and operational defaults
 
 - Never add real credentials, session cookies, tokens, customer data, account identifiers, private hostnames, or private IP addresses to examples or fixtures.
+- Dockerfiles MUST run their final containers as a non-root user. Root MAY be used during image construction for package installation and file ownership setup, but every Dockerfile MUST declare or inherit an explicit non-root runtime user.
 - Avoid recommending unrestricted body capture, uncontrolled query capture, internal topology disclosure, or sensitive header logging.
 - Make capture bounded, selective, and explicit when documenting deeper diagnostics.
 - Explain privacy, retention, access-control, and redaction implications when a proposal adds diagnostic data.
